@@ -1,0 +1,4 @@
+*.env
+vk_profile*
+obfs4webrtc.7z
+go.sum
