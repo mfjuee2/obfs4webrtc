@@ -452,6 +452,8 @@ func setupTun(cidr string, isServer bool) error {
 }
 
 func RunBot(cfg *config.Config, targetId string) {
+	// ClearChromeLock(cfg.VkProfilePath)
+
 	// --- ПЕРЕХВАТ СИГНАЛОВ ---
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
@@ -483,7 +485,7 @@ func RunBot(cfg *config.Config, targetId string) {
 		chromedp.NoSandbox,
 		chromedp.Flag("headless", true), // ВКЛЮЧИ ГОЛОВУ (HEADLESS=FALSE) ДЛЯ ТЕСТА!
 		chromedp.Flag("disable-dev-shm-usage", true),
-		chromedp.Flag("remote-debugging-port", "9222"),
+		// chromedp.Flag("remote-debugging-port", "9222"),
 		chromedp.Flag("user-data-dir", cfg.VkProfilePath),
 		chromedp.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"),
 		chromedp.Flag("autoplay-policy", "no-user-gesture-required"),

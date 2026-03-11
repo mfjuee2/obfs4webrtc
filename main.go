@@ -28,6 +28,7 @@ func main() {
 	if Help {
 		flag.Usage()
 	}
+
 	if VkTargetServer != "" {
 		if !strings.HasPrefix(VkTargetServer, "id") {
 			fmt.Println("Please enter a valid ID starting with 'id'")
@@ -36,6 +37,14 @@ func main() {
 		VkTargetServer = strings.TrimPrefix(VkTargetServer, "id")
 
 		Mode = "client"
+	}
+
+	if Gui {
+		err := config.RunSetupWizardVk(Mode)
+		if err != nil {
+			log.Fatal("Error configuration: ", err)
+		}
+		return
 	}
 
 	if SpeedTest {
