@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path/filepath"
 
 	"github.com/chromedp/chromedp"
 	"github.com/joho/godotenv"
@@ -29,6 +30,8 @@ func RunSetupWizardVk(mode string) error {
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
 
 	profilePath := fmt.Sprintf("./vk_profile_%s", mode)
+
+	ClearChromeLock(profilePath)
 
 	// 1. Настраиваем Chrome в видимом режиме (Headless = false)
 	opts := append(chromedp.DefaultExecAllocatorOptions[:],
@@ -124,4 +127,23 @@ func LoadConfig(mode string) (*Config, error) {
 		return nil, fmt.Errorf("%s not exist", vkProfilePath)
 	}
 	return nil, err
+}
+
+// clearChromeLock удаляет файлы блокировки, которые мешают запуску Chrome
+func ClearChromeLock(profilePath string) {
+	// Chrome в Linux создает эти файлы как символические ссылки или сокеты
+	lockFiles := []string{"SingletonLock", "SingletonSocket", "SingletonCookie"}
+
+	for _, fileName := range lockFiles {
+		fullPath := filepath.Join(profilePath, fileName)
+
+		// Проверяем существование файла
+		if _, err := os.Lstat(fullPath); err == nil {
+			fmt.Printf("[Fix] Removing stale lock file: %s\n", fileName)
+			err := os.Remove(fullPath)
+			if err != nil {
+				fmt.Printf("[Warning] Could not remove %s: %v\n", fileName, err)
+			}
+		}
+	}
 }
